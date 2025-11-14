@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Chat VisualCont</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <style>
+        :root {
+            --brand: #0B3A6F;
+            --brand-2: #1565C0;
+            --rose: #b61267;
+            --bg: #ffffff;
+            --muted: #6b7a90;
+            --shadow: 0 10px 30px rgba(0, 0, 0, .18);
+        }
+
+        /* Reset base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(90deg, var(--brand) 0%, var(--brand-2) 100%);
+            font-family: "Segoe UI", system-ui, Arial, sans-serif;
+            color: #0b2e59;
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* ========== Shell centrado sin margen ========== */
+        .shell {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ========== HERO (contenedor superior) ========== */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr .8fr;
+            gap: 24px;
+            padding: 20px;
+            border-radius: 0;
+            color: #fff;
+            background: linear-gradient(90deg, var(--brand) 0%, var(--brand-2) 100%);
+
+            width: 100%;
+        }
+
+        .hero h1 {
+            margin: 0;
+            padding: 0;
+            font-size: clamp(28px, 4.5vw, 48px);
+            font-weight: 900;
+            letter-spacing: .2px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+        }
+
+        .hero p {
+            margin: 0;
+            padding: 0;
+            font-size: clamp(14px, 2.2vw, 18px);
+            opacity: .95;
+            max-width: 48ch;
+            line-height: 1.35;
+        }
+
+        .hero .badge {
+            justify-self: start;
+            align-self: start;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, .12);
+            border: 1px solid rgba(255, 255, 255, .18);
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-weight: 700;
+            box-shadow: inset 0 10px 30px rgba(0, 0, 0, .2);
+            margin: 0;
+        }
+
+        .hero .clock {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            color: #2a5dcc;
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+        }
+
+        /* Responsive hero */
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .hero .badge {
+                justify-self: start;
+            }
+        }
+
+        /* ========== BARRA DE CHAT (abajo) ========== */
+        .chatbar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: linear-gradient(90deg, var(--brand) 0%, var(--brand-2) 100%);
+            color: #fff;
+            border-radius: 0;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            cursor: pointer;
+            width: 100%;
+            margin: 0;
+        }
+
+        .chatbar .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            background: #fff url('https://cdn-icons-png.flaticon.com/512/747/747376.png') no-repeat center/70%;
+            flex: 0 0 auto;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+            margin: 0;
+        }
+
+        .chatbar .txt {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chatbar .txt .t1 {
+            font-weight: 800;
+            font-size: 16px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chatbar .txt .t1 i {
+            opacity: .92;
+        }
+
+        .chatbar .txt .t2 {
+            font-size: 12px;
+            opacity: .9;
+            font-weight: 500;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chatbar .chev {
+            margin-left: auto;
+            font-weight: 900;
+            font-size: 18px;
+            opacity: .9;
+        }
+
+        /* En pantallas grandes, estilo “pill” centrado */
+        @media (min-width: 920px) {
+            .chatbar {
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
+                width: 520px;
+                border-radius: 16px;
+            }
+        }
+
+        /* ========== Dialogflow Messenger (estilos) ========== */
+        df-messenger {
+            --df-messenger-button-titlebar-color: var(--brand);
+            --df-messenger-chat-background-color: #ffffff;
+            --df-messenger-send-icon: var(--brand);
+            --df-messenger-font-color: #111827;
+            --df-messenger-user-message: #e7f0ff;
+            --df-messenger-bot-message: #f5f8fc;
+            position: fixed;
+            right: 20px;
+            bottom: 82px;
+            z-index: 1001;
+            margin: 0;
+            padding: 0;
+        }
+
+        df-messenger .df-chat-icon {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+        <section class="hero" role="region" aria-label="Bienvenida VisualCont">
+            <div>
+                <h1>¡Bienvenido!</h1>
+                <p>Siempre a tu disposición para tus consultas tributarias y aduaneras. Respuestas claras, 24/7.</p>
+            </div>
+            <div class="badge">
+                <div></div> Disponible 24/7
+            </div>
+            <div class="chatbar" id="chatbar" aria-label="Abrir chat VisualCont">
+                <div class="avatar" aria-hidden="true"></div>
+                <div class="txt">
+                    <div class="t1">Pregúntale al <i>Chatbot</i></div>
+                    <div class="t2">Consúltale a nuestro bot de asistencia</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+
+    /**    * API DE DIALOGFLOW
+     **/
+    <df-messenger chat-title="VisualCont" agent-id="d93728f0-fd0d-4639-9402-71cee7324317" project-id="visualcontchatbot"
+        language-code="es" intent="WELCOME">
+    </df-messenger>
+
+    
+    <script>
+        const CUSTOM_ICON_URL = 'https://cdn-icons-png.freepik.com/512/13330/13330989.png';
+
+        function onReady(fn) { document.readyState !== 'loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
+
+        onReady(() => {
+            const df = document.querySelector('df-messenger');
+            const bar = document.getElementById('chatbar');
+
+            function toggleChat(open = null) {
+                const root = df?.shadowRoot;
+                if (!root) return;
+                const btn = root.querySelector('.df-chat-icon') || root.querySelector('button');
+                if (!btn) return;
+                const panel = root.querySelector('df-chat');
+                const isOpen = panel && panel.hasAttribute('opened');
+                const shouldOpen = (open === null) ? !isOpen : !!open;
+                if (shouldOpen !== isOpen) btn.click();
+            }
+
+            bar.addEventListener('click', () => toggleChat());
+
+            function patchIcon() {
+                try {
+                    const root = df?.shadowRoot; if (!root) return false;
+                    const btn = root.querySelector('.df-chat-icon'); if (!btn) return false;
+                    const svg = btn.querySelector('svg'); if (svg) svg.style.display = 'none';
+                    Object.assign(btn.style, {
+                        backgroundImage: `url("${CUSTOM_ICON_URL}")`,
+                        backgroundColor: 'var(--brand)',
+                        backgroundSize: '100%',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center',
+                        borderRadius: '50%',
+                        boxShadow: '0 8px 20px rgba(0,0,0,.28)'
+                    });
+                    return true;
+                } catch { return false; }
+            }
+
+            if (!patchIcon()) {
+                let tries = 0;
+                const t = setInterval(() => { if (patchIcon() || ++tries > 20) clearInterval(t); }, 150);
+            }
+
+            setTimeout(() => toggleChat(true), 300);
+        });
+    </script>
+</body>
+
+</html>
